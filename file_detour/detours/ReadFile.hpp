@@ -1,5 +1,6 @@
-
 #include <windows.h>
+#include ".\..\crypto\decr.hpp"
+#include "handle_storage.hpp"
 
 BOOL (WINAPI * MS_ReadFile)(
               HANDLE       hFile,
@@ -9,6 +10,7 @@ BOOL (WINAPI * MS_ReadFile)(
   LPOVERLAPPED lpOverlapped
 ) = ReadFile;
 
+HANDLE readPrev = 0;
 
 BOOL (WINAPI SH_ReadFile)(
               HANDLE       hFile,
@@ -17,46 +19,37 @@ BOOL (WINAPI SH_ReadFile)(
     LPDWORD      lpNumberOfBytesRead,
   LPOVERLAPPED lpOverlapped
 ) 
-{
-     //printf("[OpenFile hook] reading....\n");
-    char *name=  GetFileNameFromHandle(hFile);
-  
-   // printf("%s %i\n", name, nNumberOfBytesToRead);
-
-
-    if (!strcmp(name, "C:\\shaiyaarchive\\shaiya-us\\original\\data.sah"))
+{  
+    unsigned char   SHALL_DECR = 0;
+    if (!readPrev || hFile != readPrev)
     {
-            free(name);
-
-        BOOL R = MS_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+        if (hFile == dataSahHandle)
+            printf("Reading DATA::%s\n", dataSahPath);
+        else if (hFile == updateSahHandle)
+            printf("Reading UPDATE::%s\n", updateSahPath);
+        else 
+        {
+            char *fname = GetFileNameFromHandle(hFile);
+            printf("Reading ??::%s [%x]\n", fname, hFile);
+            free(fname);
+        }
+        readPrev = hFile;
+    }
+    if ((dataSahHandle && (hFile == dataSahHandle))  || (updateSahHandle && (hFile == updateSahHandle)))
+        SHALL_DECR = 1;
+    BOOL R = MS_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+    if (SHALL_DECR)
+    {
         unsigned long    pos = GetFilePointer(hFile) - *lpNumberOfBytesRead;
-
         unsigned int     i = 0;
-
-      
-            unsigned char *rr = (unsigned char *) lpBuffer;
-        //    printf("pos: %x " , pos);
-
-
-
-
-
+        unsigned char   *rr = (unsigned char *) lpBuffer;
         while (i < *lpNumberOfBytesRead)
         {
              unsigned char *byte = rr + i;
              int offset = pos + i;
-        
-
-             int r = *byte ^ 42 * offset;
-
-
-            *byte  = (char) (( r + 2 - offset));
-
-
+            *byte  = decr(*byte, offset);
             i += 1;
         }
-        return R;
     }
-    free(name);
-    return MS_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+    return R;
 }

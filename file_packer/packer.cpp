@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "..\crypto\encr.hpp"
 
 using std::cout; using std::cerr;
 using std::endl; using std::string;
@@ -22,7 +23,7 @@ int main(int ac, char **av)
     }
     unsigned int i = 0;
     while (input_file.get(byte)) {
-        output_file << (char)(( byte   - 2 + i) ^ (42 * i));
+        output_file << encr(byte, i);// (char)(( byte   - 2 + i) ^ (42 * i));
         i += 1;
     }
     input_file.close();

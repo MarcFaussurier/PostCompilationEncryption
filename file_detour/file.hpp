@@ -19,8 +19,9 @@ char* GetFileNameFromHandle(HANDLE hFile)
 
   if( dwFileSizeLo == 0 && dwFileSizeHi == 0 )
   {
-     _tprintf(TEXT("Cannot map a file with a length of zero.\n"));
-     return FALSE;
+     // _tprintf(TEXT("Cannot map a file with a length of zero.\n"));
+      free(pszFilename);
+     return 0;
   }
 
   // Create a file mapping object.

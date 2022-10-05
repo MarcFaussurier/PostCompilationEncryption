@@ -1,0 +1,1 @@
+#define UPDATER_KEY "$pat7894f+*apfjfe+-"

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <Import Condition=" '$(EAZFUSCATOR_NET_HOME)' != '' and Exists('$(EAZFUSCATOR_NET_HOME)\Integration\MSBuild\Eazfuscator.NET.targets') " Project="$(EAZFUSCATOR_NET_HOME)\Integration\MSBuild\Eazfuscator.NET.targets" />
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>Shaiya_Updater2</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>shaiya.ico</ApplicationIcon>
+    <AssemblyName>Shaiya Updater</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Eazfuscator.NET is integrated with this project at MSBuild level: https://www.gapotchenko.com/eazfuscator.net/kb/100036 -->
+    <EazfuscatorIntegration>MSBuild</EazfuscatorIntegration>
+    <EazfuscatorActiveConfiguration>Release</EazfuscatorActiveConfiguration>
+    <EazfuscatorCompatibilityVersion>2022.1</EazfuscatorCompatibilityVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="shaiya.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="shaiya.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="shaiya.png" />
+  </ItemGroup>
+
+</Project>
