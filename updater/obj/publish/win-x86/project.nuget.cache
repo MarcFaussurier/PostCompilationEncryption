@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "GLKPiYoLSZWhprLyzj3wzKd1IySsV/G2ONb/m0VR4HZ7/kNtXjZBLJTlGV+4YDKLkQrKiwSAkpB5VQ4gIjSsBw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\admin\\Desktop\\PostCompilationEncryption\\updater\\Shaiya Updater2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\admin\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\6.0.9\\microsoft.netcore.app.runtime.win-x86.6.0.9.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\6.0.9\\microsoft.windowsdesktop.app.runtime.win-x86.6.0.9.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\6.0.9\\microsoft.aspnetcore.app.runtime.win-x86.6.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}
