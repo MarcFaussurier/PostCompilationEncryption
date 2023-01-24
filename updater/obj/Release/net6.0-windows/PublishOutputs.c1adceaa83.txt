@@ -1,4 +1,0 @@
-C:\Users\admin\Desktop\PostCompilationEncryption\updater\bin\Release\net6.0-windows\publish\Shaiya Updater.exe
-C:\Users\admin\Desktop\PostCompilationEncryption\updater\bin\Release\net6.0-windows\publish\Shaiya Updater.dll
-C:\Users\admin\Desktop\PostCompilationEncryption\updater\bin\Release\net6.0-windows\publish\Shaiya Updater.deps.json
-C:\Users\admin\Desktop\PostCompilationEncryption\updater\bin\Release\net6.0-windows\publish\Shaiya Updater.runtimeconfig.json

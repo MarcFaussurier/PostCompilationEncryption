@@ -18,18 +18,38 @@ using System.Net;
 using System.ComponentModel;
 using System.IO.Compression;
 using System.Threading;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+
+[Flags]
+enum MoveFileFlags
+{
+    MOVEFILE_REPLACE_EXISTING = 0x00000001,
+    MOVEFILE_COPY_ALLOWED = 0x00000002,
+    MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004,
+    MOVEFILE_WRITE_THROUGH = 0x00000008,
+    MOVEFILE_CREATE_HARDLINK = 0x00000010,
+    MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x00000020
+}
+
+
+
 
 namespace Shaiya_Updater2
 {
+  
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern bool MoveFileEx(string lpExistingFileName, string lpNewFileName, MoveFileFlags dwFlags);
+
+
         const string srvRemote = "http://patch-fr.shaiya.ovh";
         const string srvVersionPath = ".srvVersion";
         const string cliVersionPath = "version.ini";// "C:\\shaiyaarchive\\shaiya-us\\original\\Version.ini";
-        const string dataPath = "data.sah";//"C:\\shaiyaarchive\\shaiya-us\\original\\data.sah";
         void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             patchProgress.Dispatcher.BeginInvoke(
@@ -95,27 +115,53 @@ namespace Shaiya_Updater2
                 File.Delete(str3);
 
                 ZipFile.ExtractToDirectory(patchFile, ".", true);
-                
-                SAH sAH = new SAH(dataPath);
-               
-                if (File.Exists(str2) && File.Exists(str3))
+
+
+                if (File.Exists(System.IO.Path.Combine("data.sah")))
                 {
-                    SAH sAH1 = new SAH(str2);
-                    if (sAH1.IsValid)
+                    SAH sAH = new SAH(System.IO.Path.Combine("data.sah"));
+
+                    if (File.Exists(str2) && File.Exists(str3))
                     {
-                        sAH.Patch(sAH1);
+                        SAH sAH1 = new SAH(str2);
+                        if (sAH1.IsValid)
+                        {
+                            sAH.Patch(sAH1);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error: invalid SAH, please re-download or contact support.");
+                        }
+                        File.Delete(str2);
+                        File.Delete(str3);
                     }
-                    else
-                    {
-                        MessageBox.Show("Error: invalid SAH, please re-download or contact support.");
-                    }
-                    File.Delete(str2);
-                    File.Delete(str3);
+                    File.Delete(patchFile);
                 }
-                File.Delete(patchFile);
               
                 CliINI.Write("CurrentVersion", CliVersion.ToString(), "Version");
 
+                if (File.Exists("new_updater.exe"))
+                { 
+                    ProcessStartInfo Info = new ProcessStartInfo();
+                    Info.Arguments = "/C ping 127.0.0.1 -n 2 && move /Y new_updater.exe \"" + Process.GetCurrentProcess().MainModule.FileName + "\" && " + "\"" + Process.GetCurrentProcess().MainModule.FileName + "\"";
+                    Info.WindowStyle = ProcessWindowStyle.Hidden;
+                    Info.CreateNoWindow = true;
+                    Info.FileName = "cmd.exe";
+                    Process.Start(Info);
+                    System.Environment.Exit(0);
+                }
+
+                if (File.Exists(System.IO.Path.Combine("update.bat")))
+                {
+                    System.Diagnostics.Process.Start(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.bat"));
+                    ProcessStartInfo Info = new ProcessStartInfo();
+                    Info.Arguments = "/C ping 127.0.0.1 -n 2 && del " + "\"" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.bat") + "\" && rm " + "\"" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.bat") + "\"";
+                    Info.WindowStyle = ProcessWindowStyle.Hidden;
+                    Info.CreateNoWindow = true;
+                    Info.FileName = "cmd.exe";
+                    Process.Start(Info);
+
+                }
                 totalProgress.Dispatcher.BeginInvoke(
                     (Action)(() => {
                     totalProgress.Value = (int)(CliVersion * 100 / SrvVersion);
@@ -152,39 +198,55 @@ namespace Shaiya_Updater2
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("CONFIG.exe");
+            try
+            {
+                System.Diagnostics.Process.Start(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CONFIG.exe"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://shaiya.fr");
+
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://shaiya.fr") { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("discord://discord.com/channels/YYSsMueGBK");
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://discord.gg/WjtFDh9c5m") { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-
-
-            String curItem = new String(listBox1.SelectedItem.ToString().Split(" ")[1]);
-            if (curItem.Equals("Brazilian"))
-                System.Diagnostics.Process.Start("game_BRZ.exe", "$pat7894f+*apfjfe+-");
-            else if (curItem.Equals("French"))
-                System.Diagnostics.Process.Start("game_FRC.exe", "$pat7894f+*apfjfe+-");
-            else if (curItem.Equals("German"))
-                System.Diagnostics.Process.Start("game_GER.exe", "$pat7894f+*apfjfe+-");
-            else if (curItem.Equals("Italian"))
-                System.Diagnostics.Process.Start("game_ITA.exe", "$pat7894f+*apfjfe+-");
-            else if (curItem.Equals("Spanish"))
-                System.Diagnostics.Process.Start("game_SPN.exe", "$pat7894f+*apfjfe+-");
-            else if (curItem.Equals("English"))
-                System.Diagnostics.Process.Start("game_USA.exe", "$pat7894f+*apfjfe+-");
-            else
-                MessageBox.Show("[" + curItem + "] fucking not founddddd");
-
+            try
+            {
+                String curItem = new String(listBox1.SelectedItem.ToString().Split(" ")[1]);
+                // TODO : add multi langue with curItem
+                System.Diagnostics.Process.Start(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"game.exe"), "start game");
+                System.Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {                 
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

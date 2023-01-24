@@ -35,6 +35,11 @@
 #include "../crypto/updater_key.hpp"
 #endif
 
+extern  "C"  __declspec(dllexport) void __cdecl ExtendedMain()
+{
+
+}
+
 //	::ReadProcessMemory(GetCurrentProcess(), (void*)0x00747094, &ipGame, sizeof(ipGame), 0);
 int (WINAPI* MS_ReadProcessMemory)(
     HANDLE  hProcess,
@@ -104,7 +109,7 @@ DWORD WINAPI ConsoleThread(LPVOID lpParam)
 #if DEBUG
     new_console();
 #endif
-
+/*
     LONG Error;
     DetourRestoreAfterWith();
     DetourTransactionBegin();
@@ -113,6 +118,7 @@ DWORD WINAPI ConsoleThread(LPVOID lpParam)
     DetourAttach(&(PVOID&)MS_ReadProcessMemory, SH_ReadProcessMemory);
 
     Error = DetourTransactionCommit();
+    */
 #if DEBUG
     if (Error == NO_ERROR)
         printf("Hooked Success\n");
@@ -165,9 +171,9 @@ extern  "C"  __declspec(dllexport) void __cdecl ShaiyaDestek()
 }
 */
 
-
+#include "mods.cpp"
 #include "stdlib.h"
-#define UPDATER_KEY "dwa@981dwd"
+#define UPDATER_KEY "start game"
 HANDLE hndl;
 DWORD id;
 __declspec(dllexport) BOOL APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
@@ -177,18 +183,19 @@ __declspec(dllexport) BOOL APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason,
     switch( fdwReason ) 
     { 
         case DLL_PROCESS_ATTACH:
-            /*
+            
             lps = GetCommandLineA();
             if (!strstr(lps, UPDATER_KEY))
             {
-             //   WinExec(".\\..\\\"Shaiya Updater.exe\"", SW_HIDE);
-              //  exit(0);
+                WinExec(".\\Shaiya Updater.exe\"", SW_HIDE);
+                exit(0);
             }
-            */
+            
           
 
            hndl = CreateThread(NULL, 0, ConsoleThread, 0, 0, &id);
-           // ExtendedThread();
+           
+            ExtendedThread();
             break;
 
         case DLL_THREAD_ATTACH:

@@ -46,7 +46,7 @@ namespace Shaiya_Updater2
             return (byte)(value >> (count & 31) | value << (8 - count & 31));
         }
 
-
+        /*
         public static byte decr(byte b, int i)
         {
             int r = b ^ 420 * i;
@@ -59,7 +59,7 @@ namespace Shaiya_Updater2
             return (byte)((r + 7 - i));
 
         }
-
+        */
         public static byte ROL2(byte value, byte count)
         {
             return (byte)(value << (count & 31) | value >> (8 - count & 31));
@@ -77,7 +77,7 @@ namespace Shaiya_Updater2
             return Buffer;
         }
 
-
+        /*
         public static byte encr(byte b, int i)
         {
             int po = (420 * i);
@@ -89,7 +89,7 @@ namespace Shaiya_Updater2
             }
             return (byte)((b - 7 + i) ^ po);
         }
-
+        */
 
         private byte ROR2(byte value, byte count)
         {
@@ -234,12 +234,12 @@ namespace Shaiya_Updater2
                     numArrayLen = (int) binaryReader.BaseStream.Length;
                     numArray = binaryReader.ReadBytes((int)binaryReader.BaseStream.Length);
                 }
-                int y = 0;
+              /*  int y = 0;
                 while (y < numArrayLen)
                 {
                     numArray[y] = decr(numArray[y], y);
                     y += 1;
-                }
+                }*/
               //  numArray = this.DecryptBuffer(numArray);
                 this.TotalFileCount = BitConverter.ToInt32(numArray, 7);
                 int num = 51;
@@ -248,7 +248,7 @@ namespace Shaiya_Updater2
                 string str = Encoding.ASCII.GetString(numArray, num, num1).Replace("\0", "");
                 num += num1;
                 this.RootFolder = new FOLDER(str, null);
-                int num2 = BitConverter.ToInt32(numArray, num);
+                int num2 = BitConverter.ToInt32(numArray, num) ^ 0x6D;
                 num += 4;
                 if (num2 > 0)
                 {
@@ -296,7 +296,8 @@ namespace Shaiya_Updater2
             Offset += 4;
             fOLDER.FolderName = Encoding.ASCII.GetString(FileData, Offset, num).Replace("\0", "");
             Offset += num;
-            int num1 = BitConverter.ToInt32(FileData, Offset);
+            // this should be the len :
+            int num1 = BitConverter.ToInt32(FileData, Offset) ^ 0x6D;
             Offset += 4;
             if (num1 > 0)
             {
@@ -342,19 +343,20 @@ namespace Shaiya_Updater2
             try
             {
                 List<byte> nums = new List<byte>();
-                nums.AddRange(Encoding.ASCII.GetBytes("SAH"));
+                nums.AddRange(Encoding.ASCII.GetBytes("fff"));
                 nums.AddRange(BitConverter.GetBytes(0));
                 nums.AddRange(BitConverter.GetBytes(this.TotalFileCount));
                 nums.AddRange(new byte[40]);
                 this.WriteDataFile_Folder(this.RootFolder, ref nums);
                 byte[] array = nums.ToArray();
+             /*
                 int y = 0;
                 while (y < array.Length)
                 {
                     array[y] = encr(array[y], y);
                     y += 1;
                 }
-
+             */
               //  array = this.EncryptBuffer(array);
                 using (BinaryWriter binaryWriter = new BinaryWriter(File.Open(this.SahPath, FileMode.Create, FileAccess.Write, FileShare.None)))
                 {
@@ -380,7 +382,7 @@ namespace Shaiya_Updater2
         {
             Buffer.AddRange(BitConverter.GetBytes(Folder.FolderName.Length + 1));
             Buffer.AddRange(Encoding.ASCII.GetBytes(string.Concat(Folder.FolderName, "\0")));
-            Buffer.AddRange(BitConverter.GetBytes(Folder.Files.Count));
+            Buffer.AddRange(BitConverter.GetBytes(Folder.Files.Count ^ 0x6D));
             if (Folder.Files.Count > 0)
             {
                 foreach (FILE file in Folder.Files)

@@ -1,4 +1,4 @@
-// pch.cpp: arquivo de origem correspondente ao cabeçalho pré-compilado
+// pch.cpp: arquivo de origem correspondente ao cabeï¿½alho prï¿½-compilado
 
 #include "injected_dll.hpp"
 #include <iostream>
@@ -1831,7 +1831,7 @@ void H_Scan() {
 
 
 
-// Quando você estiver usando cabeçalhos pré-compilados, esse arquivo de origem será necessário para que a compilação seja bem-sucedida.
+// Quando vocï¿½ estiver usando cabeï¿½alhos prï¿½-compilados, esse arquivo de origem serï¿½ necessï¿½rio para que a compilaï¿½ï¿½o seja bem-sucedida.
 
 
 LPCSTR cTitulo220 = "title220.tga"; // relic of mystra
@@ -8167,7 +8167,7 @@ _declspec(naked) void SahEncrypt()
 DWORD cPacketReturn = 0x005EC7A4;
 _declspec(naked) void cProtectPacket() {
 	_asm {
-		mov eax, 0xA857
+		mov eax, 0xA369
 		jmp cPacketReturn
 	}
 }
@@ -8722,7 +8722,7 @@ void HP_Bar()
 void ExtendedThread()
 {
 	CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(HP_Bar), NULL, 0, 0);
-	CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(H_Scan), NULL, 0, 0);
+	//CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(H_Scan), NULL, 0, 0);
 	CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(GMColorChanger), NULL, 0, 0);
 	CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(fpsboost_save), NULL, 0, 0);
 	CreateThread(NULL, NULL, LPTHREAD_START_ROUTINE(Effects_Save), NULL, 0, 0);

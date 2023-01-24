@@ -1,1 +1,2 @@
-#define UPDATER_KEY "$pat7894f+*apfjfe+-"
+#define UPDATER_KEY "dwa@981dwd"
+// also present in updater !!
